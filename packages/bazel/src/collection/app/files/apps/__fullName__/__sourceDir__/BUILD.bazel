@@ -6,4 +6,8 @@ ng_module(
     name = "<%= sourceDir %>",
     srcs = glob(["*.ts"]),
     tsconfig = "//:tsconfig.json",
+    deps = [
+        "//apps/<%= fullName %>/src/app",
+        "@rxjs",
+    ],
 )

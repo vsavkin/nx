@@ -155,7 +155,10 @@ load("@angular//:index.bzl", "ng_module")
 
 ng_module(
     name = "app",
-    srcs = glob(["*.ts"])
+    srcs = glob(["*.ts"]),
+    deps = [
+      "@rxjs",
+    ],
 )
 `;
 
