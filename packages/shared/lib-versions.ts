@@ -1,11 +1,12 @@
 export const angularCliVersion = '1.7.1';
-export const angularVersion = '5.2.6';
+export const angularVersion = '5.2.7';
 export const angularJsVersion = '1.6.6';
 export const ngrxVersion = '5.1.0';
 export const routerStoreVersion = '5.0.1';
 export const nxVersion = '*';
 export const schematicsVersion = '*';
-export const angularCliSchema = './node_modules/@nrwl/schematics/src/schema.json';
+export const angularCliSchema =
+    './node_modules/@nrwl/schematics/src/schema.json';
 export const latestMigration = '20180227-cleanup-scripts';
 export const prettierVersion = '1.10.2';
 export const typescriptVersion = '2.6.2';

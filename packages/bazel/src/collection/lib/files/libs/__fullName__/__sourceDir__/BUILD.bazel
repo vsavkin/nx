@@ -1,3 +1,4 @@
+# TODO: Make this private when we can import from the root index.ts
 package(default_visibility = ["//visibility:public"])
 
 load("@angular//:index.bzl", "ng_module")

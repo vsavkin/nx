@@ -1,4 +1,4 @@
-import {checkFilesExist, newApp, newBazelProject, newLib, runCLI, updateFile} from '../utils';
+import {checkFilesExist, newApp, newBazelProject, newLib, runCLI, runCommand, updateFile} from '../utils';
 
 describe('Nrwl Workspace (Bazel)', () => {
   it('should work', () => {
@@ -10,5 +10,7 @@ describe('Nrwl Workspace (Bazel)', () => {
     newLib('myLib --directory=myDir', '@nrwl/bazel');
 
     checkFilesExist('WORKSPACE', 'BUILD.bazel');
+
+    runCommand('bazel build ...');
   }, 1000000);
 });
