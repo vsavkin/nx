@@ -41,7 +41,7 @@ function addNxModule(path: string): Rule {
         modulePath, moduleSource, ts.ScriptTarget.Latest, true);
     insert(host, modulePath, [
       insertImport(sourceFile, modulePath, 'NxModule', '@nrwl/nx'),
-      ...addImportToModule(sourceFile, modulePath, 'NxModule.forRoot()')
+      // ...addImportToModule(sourceFile, modulePath, 'NxModule.forRoot()')
     ]);
     return host;
   };
@@ -156,6 +156,10 @@ load("@angular//:index.bzl", "ng_module")
 ng_module(
     name = "app",
     srcs = glob(["*.ts"]),
+    assets = [
+        "app.component.css",
+        "app.component.html",
+    ],
     deps = [
       "@rxjs",
     ],
