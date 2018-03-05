@@ -14,6 +14,7 @@ filegroup(
         ext,
     ]) for pkg in [
         "@angular",
+        "@nrwl",
         "tsickle",
         "tsutils",
         "typescript",
@@ -42,6 +43,6 @@ filegroup(
     name = "angular_bootstrap_scripts",
     # do not sort
     srcs = [
-        "//:node_modules/zone.js/dist/zone.min.js"
+        "//:node_modules/zone.js/dist/zone.min.js",
     ],
 )
