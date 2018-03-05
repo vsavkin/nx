@@ -5,7 +5,7 @@ describe('Nrwl Workspace (Bazel)', () => {
     newBazelProject();
     newApp(
         'myApp --directory=myDir',
-        '--collection=@nrwl/bazel --npmScope=proj',
+        '--collection=@nrwl/bazel',
     );
     newLib('myLib --directory=myDir', '@nrwl/bazel');
 
