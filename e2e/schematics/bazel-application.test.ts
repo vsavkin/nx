@@ -7,7 +7,7 @@ describe('Nrwl Workspace (Bazel)', () => {
         'myApp --directory=myDir',
         '--collection=@nrwl/bazel --npmScope=proj',
     );
-    newLib('myLib --directory=myDir');
+    newLib('myLib --directory=myDir', '@nrwl/bazel');
 
     checkFilesExist('WORKSPACE', 'BUILD.bazel');
   }, 1000000);
