@@ -1,29 +1,15 @@
-import {
-  apply,
-  branchAndMerge,
-  chain,
-  externalSchematic,
-  filter,
-  MergeStrategy,
-  mergeWith,
-  move,
-  noop,
-  Rule,
-  template,
-  Tree,
-  url,
-  SchematicContext
-} from '@angular-devkit/schematics';
-import { Schema } from './schema';
+import {apply, branchAndMerge, chain, externalSchematic, filter, MergeStrategy, mergeWith, move, noop, Rule, template, Tree, url, SchematicContext} from '@angular-devkit/schematics';
+import {Schema} from './schema';
 import {strings} from '@angular-devkit/core';
-import { addImportToModule, insert, toFileName } from '@nrwl/schematics';
+import {addImportToModule, insert, toFileName} from '@nrwl/schematics';
 import * as ts from 'typescript';
-import { addBootstrapToModule } from '@schematics/angular/utility/ast-utils';
-import { insertImport } from '@schematics/angular/utility/route-utils';
-import { addApp, serializeJson, cliConfig, readCliConfigFile } from '../../../../shared/fileutils';
-import { addImportToTestBed } from '../../../../shared/ast-utils';
-import { offsetFromRoot } from '../../../../shared/common';
+import {addBootstrapToModule} from '@schematics/angular/utility/ast-utils';
+import {insertImport} from '@schematics/angular/utility/route-utils';
+import {addApp, serializeJson, cliConfig, readCliConfigFile} from '../../../../shared/fileutils';
+import {addImportToTestBed} from '../../../../shared/ast-utils';
+import {offsetFromRoot} from '../../../../shared/common';
 import {FormatFiles, wrapIntoFormat} from '../../../../shared/tasks';
+import * as fs from 'fs';
 
 interface NormalizedSchema extends Schema {
   fullName: string;
@@ -34,11 +20,14 @@ function addBootstrap(path: string): Rule {
   return (host: Tree) => {
     const modulePath = `${path}/app/app.module.ts`;
     const moduleSource = host.read(modulePath)!.toString('utf-8');
-    const sourceFile = ts.createSourceFile(modulePath, moduleSource, ts.ScriptTarget.Latest, true);
+    const sourceFile = ts.createSourceFile(
+        modulePath, moduleSource, ts.ScriptTarget.Latest, true);
     insert(host, modulePath, [
-      insertImport(sourceFile, modulePath, 'BrowserModule', '@angular/platform-browser'),
+      insertImport(
+          sourceFile, modulePath, 'BrowserModule', '@angular/platform-browser'),
       ...addImportToModule(sourceFile, modulePath, 'BrowserModule'),
-      ...addBootstrapToModule(sourceFile, modulePath, 'AppComponent', './app.component')
+      ...addBootstrapToModule(
+          sourceFile, modulePath, 'AppComponent', './app.component')
     ]);
     return host;
   };
@@ -48,7 +37,8 @@ function addNxModule(path: string): Rule {
   return (host: Tree) => {
     const modulePath = `${path}/app/app.module.ts`;
     const moduleSource = host.read(modulePath)!.toString('utf-8');
-    const sourceFile = ts.createSourceFile(modulePath, moduleSource, ts.ScriptTarget.Latest, true);
+    const sourceFile = ts.createSourceFile(
+        modulePath, moduleSource, ts.ScriptTarget.Latest, true);
     insert(host, modulePath, [
       insertImport(sourceFile, modulePath, 'NxModule', '@nrwl/nx'),
       ...addImportToModule(sourceFile, modulePath, 'NxModule.forRoot()')
@@ -86,8 +76,7 @@ function addAppToAngularCliJson(options: NormalizedSchema): Rule {
     });
 
     json.lint = [
-      ...(json.lint || []),
-      {
+      ...(json.lint || []), {
         project: `${options.fullPath}/tsconfig.app.json`,
         exclude: '**/node_modules/**'
       },
@@ -105,24 +94,27 @@ function addAppToAngularCliJson(options: NormalizedSchema): Rule {
 function addRouterRootConfiguration(path: string): Rule {
   return (host: Tree) => {
     const modulePath = `${path}/app/app.module.ts`;
+    console.log(modulePath);
     const moduleSource = host.read(modulePath)!.toString('utf-8');
-    const sourceFile = ts.createSourceFile(modulePath, moduleSource, ts.ScriptTarget.Latest, true);
+    const sourceFile = ts.createSourceFile(
+        modulePath, moduleSource, ts.ScriptTarget.Latest, true);
     insert(host, modulePath, [
       insertImport(sourceFile, modulePath, 'RouterModule', '@angular/router'),
-      ...addImportToModule(sourceFile, modulePath, `RouterModule.forRoot([], {initialNavigation: 'enabled'})`)
+      ...addImportToModule(
+          sourceFile, modulePath,
+          `RouterModule.forRoot([], {initialNavigation: 'enabled'})`)
     ]);
 
     const componentSpecPath = `${path}/app/app.component.spec.ts`;
     const componentSpecSource = host.read(componentSpecPath)!.toString('utf-8');
     const componentSpecSourceFile = ts.createSourceFile(
-      componentSpecPath,
-      componentSpecSource,
-      ts.ScriptTarget.Latest,
-      true
-    );
+        componentSpecPath, componentSpecSource, ts.ScriptTarget.Latest, true);
     insert(host, componentSpecPath, [
-      insertImport(componentSpecSourceFile, componentSpecPath, 'RouterTestingModule', '@angular/router/testing'),
-      ...addImportToTestBed(componentSpecSourceFile, componentSpecPath, `RouterTestingModule`)
+      insertImport(
+          componentSpecSourceFile, componentSpecPath, 'RouterTestingModule',
+          '@angular/router/testing'),
+      ...addImportToTestBed(
+          componentSpecSourceFile, componentSpecPath, `RouterTestingModule`)
     ]);
     return host;
   };
@@ -148,10 +140,26 @@ Nx is designed to help you create and build enterprise grade Angular application
 
 function updateComponentTemplate(options: NormalizedSchema): Rule {
   return (host: Tree) => {
-    const content = options.routing
-      ? `${staticComponentContent}\n<router-outlet></router-outlet>`
-      : staticComponentContent;
+    const content = options.routing ?
+        `${staticComponentContent}\n<router-outlet></router-outlet>` :
+        staticComponentContent;
     host.overwrite(`${options.fullPath}/app/app.component.html`, content);
+  };
+}
+
+function addBazelBuildFile(path: string): Rule {
+  return (host: Tree) => {
+    const ngModule = `
+    package(default_visibility = ["//visibility:public"])
+
+    load("@angular//:index.bzl", "ng_module")
+
+    ng_module(
+        name = "app",
+        srcs = glob(["*.ts"])
+    )`;
+
+    const sourceFile = host.create(`${path}/app/BUILD.bazel`, ngModule);
   };
 }
 
@@ -163,16 +171,15 @@ export default function(schema: Schema): Rule {
     }
 
     const options = normalizeOptions(schema);
-    const templateSource = apply(url('./files'), [
-      template({
-        utils: strings,
-        dot: '.',
-        tmpl: '',
-        offsetFromRoot: offsetFromRoot(options.fullPath),
-        ...(options as object),
-        npmScope
-      })
-    ]);
+    const templateSource =
+        apply(url('./files'), [template({
+                utils: strings,
+                dot: '.',
+                tmpl: '',
+                offsetFromRoot: offsetFromRoot(options.fullPath),
+                ...(options as object),
+                npmScope
+              })]);
 
     const selector = `${options.prefix}-root`;
 
@@ -198,10 +205,9 @@ export default function(schema: Schema): Rule {
         viewEncapsulation: options.viewEncapsulation,
         changeDetection: options.changeDetection
       }),
-      updateComponentTemplate(options),
-      addBootstrap(options.fullPath),
-      addNxModule(options.fullPath),
-      addAppToAngularCliJson(options),
+      updateComponentTemplate(options), addBootstrap(options.fullPath),
+      addNxModule(options.fullPath), addAppToAngularCliJson(options),
+      addBazelBuildFile(options.fullPath),
       options.routing ? addRouterRootConfiguration(options.fullPath) : noop()
     ]);
   });
@@ -209,7 +215,8 @@ export default function(schema: Schema): Rule {
 
 function normalizeOptions(options: Schema): NormalizedSchema {
   const name = toFileName(options.name);
-  const fullName = options.directory ? `${toFileName(options.directory)}/${name}` : name;
+  const fullName =
+      options.directory ? `${toFileName(options.directory)}/${name}` : name;
   const fullPath = `apps/${fullName}/src`;
-  return { ...options, sourceDir: 'src', name, fullName, fullPath };
+  return {...options, sourceDir: 'src', name, fullName, fullPath};
 }
