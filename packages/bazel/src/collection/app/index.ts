@@ -149,15 +149,15 @@ function updateComponentTemplate(options: NormalizedSchema): Rule {
 
 function addBazelBuildFile(path: string): Rule {
   return (host: Tree) => {
-    const ngModule = `
-    package(default_visibility = ["//visibility:public"])
+    const ngModule = `package(default_visibility = ["//visibility:public"])
 
-    load("@angular//:index.bzl", "ng_module")
+load("@angular//:index.bzl", "ng_module")
 
-    ng_module(
-        name = "app",
-        srcs = glob(["*.ts"])
-    )`;
+ng_module(
+    name = "app",
+    srcs = glob(["*.ts"])
+)
+`;
 
     const sourceFile = host.create(`${path}/app/BUILD.bazel`, ngModule);
   };
