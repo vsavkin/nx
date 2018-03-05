@@ -27,6 +27,7 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "<%= angularVersion %>",
+    "@angular/bazel": "<%= angularVersion %>",
     "@angular/common": "<%= angularVersion %>",
     "@angular/compiler": "<%= angularVersion %>",
     "@angular/core": "<%= angularVersion %>",
