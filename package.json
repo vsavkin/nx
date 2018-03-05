@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "build": "./scripts/build.sh",
-    "e2e": "./scripts/e2e.sh",
+    "e2e": "./scripts/e2e.sh bazel-application",
     "format": "precise-commits --whitelist=\"{packages,e2e}/**/*.ts\"",
     "linknpm": "./scripts/link.sh",
     "package": "./scripts/package.sh",

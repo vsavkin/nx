@@ -1,0 +1,47 @@
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["tsconfig.json"])
+
+# NOTE: this will move to node_modules/BUILD in a later release
+filegroup(
+    name = "node_modules",
+    # NB: rxjs is not in this list, because we build it from sources using the
+    # label @rxjs//:rxjs
+    srcs = glob(["/".join([
+        "node_modules",
+        pkg,
+        "**",
+        ext,
+    ]) for pkg in [
+        "@angular",
+        "tsickle",
+        "tsutils",
+        "typescript",
+        "@types",
+    ] for ext in [
+        "*.js",
+        "*.json",
+        "*.d.ts",
+    ]]),
+)
+
+# TODO(alexeagle): it's messy for users to need to specify the following
+# Angular dependency lists. It should live somewhere else.
+# See https://github.com/angular/angular/issues/21048
+
+filegroup(
+    name = "angular_bundles",
+    srcs = [
+        "//:node_modules/@angular/common/bundles/common.umd.js",
+        "//:node_modules/@angular/core/bundles/core.umd.js",
+        "//:node_modules/@angular/platform-browser/bundles/platform-browser.umd.js",
+    ],
+)
+
+filegroup(
+    name = "angular_bootstrap_scripts",
+    # do not sort
+    srcs = [
+        "//:node_modules/zone.js/dist/zone.min.js"
+    ],
+)
