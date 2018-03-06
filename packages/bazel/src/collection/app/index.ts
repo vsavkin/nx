@@ -165,7 +165,6 @@ ng_module(
         "app.component.html",
     ],
     deps = [
-        "@nrwl_nx",
         "@rxjs",
     ],
 )
