@@ -41,7 +41,7 @@ function addNxModule(path: string): Rule {
         modulePath, moduleSource, ts.ScriptTarget.Latest, true);
     insert(host, modulePath, [
       insertImport(sourceFile, modulePath, 'NxModule', '@nrwl/nx'),
-      // ...addImportToModule(sourceFile, modulePath, 'NxModule.forRoot()')
+      ...addImportToModule(sourceFile, modulePath, 'NxModule.forRoot()')
     ]);
     return host;
   };

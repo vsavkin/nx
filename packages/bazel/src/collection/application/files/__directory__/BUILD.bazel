@@ -15,6 +15,7 @@ filegroup(
     ]) for pkg in [
         "@angular",
         "@nrwl",
+        "@ngrx",
         "tsickle",
         "tsutils",
         "typescript",
