@@ -12,5 +12,6 @@ describe('Nrwl Workspace (Bazel)', () => {
     checkFilesExist('WORKSPACE', 'BUILD.bazel');
 
     runCommand('bazel build ...');
+    // runCommand('bazel run apps/my-dir/my-app/src:src_devserver');
   }, 1000000);
 });

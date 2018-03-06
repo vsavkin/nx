@@ -158,7 +158,7 @@ ng_module(
     srcs = glob(["*.ts"]),
     assets = [
         "app.component.css",
-        "app.component.html",
+        "app.component.html"
     ],
     deps = [
       "@rxjs",
