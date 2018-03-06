@@ -23,7 +23,7 @@ genrule(
 
 ts_devserver(
     name = "<%= sourceDir %>_devserver",
-    entry_module = "proj/apps/my-dir/my-app/src/main",
+    entry_module = "proj/apps/<%= fullName %>/src/main",
     scripts = ["//:angular_bundles"],
     serving_path = "/bundle.min.js",
     static_files = [
@@ -37,13 +37,13 @@ load("@build_bazel_rules_nodejs//:defs.bzl", "rollup_bundle", "nodejs_binary")
 
 rollup_bundle(
     name = "bundle",
-    entry_point = "proj/apps/my-dir/my-app/src/main",
+    entry_point = "proj/apps/<%= fullName %>/src/main",
     deps = [":<%= sourceDir %>"]
 )
 
 nodejs_binary(
     name = "<%= sourceDir %>_prodserver",
-    args = ["./apps/my-dir/my-app/src"],
+    args = ["./apps/<%= fullName %>/src"],
     data = [
         "index.html",
         ":bundle",
