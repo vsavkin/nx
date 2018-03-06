@@ -236,7 +236,7 @@ export default function(schema: Schema): Rule {
         changeDetection: options.changeDetection
       }),
       updateComponentTemplate(options), addBootstrap(options.fullPath),
-      addNxModule(options.fullPath), addAppToAngularCliJson(options),
+      // addNxModule(options.fullPath), addAppToAngularCliJson(options),
       addBazelBuildFile(options.fullPath),
       options.routing ? addRouterRootConfiguration(options.fullPath) : noop()
     ]);

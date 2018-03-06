@@ -32,3 +32,22 @@ ts_devserver(
     ],
     deps = [":<%= sourceDir %>"],
 )
+
+load("@build_bazel_rules_nodejs//:defs.bzl", "rollup_bundle", "nodejs_binary")
+
+rollup_bundle(
+    name = "bundle",
+    entry_point = "proj/apps/my-dir/my-app/src/main",
+    deps = [":<%= sourceDir %>"]
+)
+
+nodejs_binary(
+    name = "<%= sourceDir %>_prodserver",
+    args = ["./apps/my-dir/my-app/src"],
+    data = [
+        "index.html",
+        ":bundle",
+        ":zone.js",
+    ],
+    entry_point = "http-server/bin/http-server",
+)

@@ -48,8 +48,10 @@ ng_module(
 )
     `);
     runCommand('bazel build ...');
-    // runCommand('bazel run apps/my-dir/my-app/src:src_devserver');
 
+    // Commands to run web servers for dev and prod
+    // bazel run apps/my-dir/my-app/src:src_devserver;
+    // bazel run apps/my-dir/my-app/src:src_prodserver
     runCommand('bazel test ...');
   }, 1000000);
 });

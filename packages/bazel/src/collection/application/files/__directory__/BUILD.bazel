@@ -24,7 +24,9 @@ filegroup(
         "*.js",
         "*.json",
         "*.d.ts",
-    ]]),
+    ]] + [
+        "node_modules/http-server/**",
+    ]),
 )
 
 # TODO(alexeagle): it's messy for users to need to specify the following
