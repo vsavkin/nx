@@ -21,15 +21,20 @@ genrule(
     cmd = "cp $< $@",
 )
 
+STATIC_FILES = [
+    "favicon.ico",
+    "index.html",
+    "styles.css",
+    ":zone.js",
+]
+
 ts_devserver(
-    name = "<%= sourceDir %>_devserver",
+    name = "devserver",
+    data = ["//apps/<%= fullName %>/src/assets"],
     entry_module = "proj/apps/<%= fullName %>/src/main",
     scripts = ["//:angular_bundles"],
     serving_path = "/bundle.min.js",
-    static_files = [
-        ":zone.js",
-        "index.html",
-    ],
+    static_files = STATIC_FILES,
     deps = [":<%= sourceDir %>"],
 )
 
@@ -38,16 +43,15 @@ load("@build_bazel_rules_nodejs//:defs.bzl", "rollup_bundle", "nodejs_binary")
 rollup_bundle(
     name = "bundle",
     entry_point = "proj/apps/<%= fullName %>/src/main",
-    deps = [":<%= sourceDir %>"]
+    deps = [":<%= sourceDir %>"],
 )
 
 nodejs_binary(
-    name = "<%= sourceDir %>_prodserver",
+    name = "prodserver",
     args = ["./apps/<%= fullName %>/src"],
-    data = [
-        "index.html",
+    data = STATIC_FILES + [
         ":bundle",
-        ":zone.js",
+        "//apps/<%= fullName %>/src/assets",
     ],
     entry_point = "http-server/bin/http-server",
 )
