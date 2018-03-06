@@ -33,7 +33,10 @@ load("@angular//:index.bzl", "ng_module")
 
 ng_module(
     name = "app",
-    srcs = glob(["*.ts"]),
+    srcs = glob(
+        ["*.ts"],
+        exclude = ["*.spec.ts"],
+    ),
     assets = [
         "app.component.css",
         "app.component.html",
@@ -46,5 +49,7 @@ ng_module(
     `);
     runCommand('bazel build ...');
     // runCommand('bazel run apps/my-dir/my-app/src:src_devserver');
+
+    runCommand('bazel test ...');
   }, 1000000);
 });
