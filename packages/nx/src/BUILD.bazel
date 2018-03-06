@@ -1,0 +1,13 @@
+package(default_visibility = ["//visibility:public"])
+
+exports_files(["tsconfig.json"])
+
+load("@angular//:index.bzl", "ng_module")
+
+ng_module(
+    name = "nrwl_nx",
+    srcs = glob([
+        "*.ts",
+    ]),
+    module_name = "@nrwl/nx",
+)

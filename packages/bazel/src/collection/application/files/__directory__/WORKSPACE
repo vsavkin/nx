@@ -72,3 +72,8 @@ local_repository(
     name = "rxjs",
     path = "node_modules/rxjs/src",
 )
+
+local_repository(
+    name = "nrwl_nx",
+    path = "node_modules/@nrwl/nx/src",
+)

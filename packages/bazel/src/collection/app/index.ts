@@ -161,10 +161,11 @@ ng_module(
         exclude = ["*.spec.ts"],
     ),
     assets = [
-      "app.component.css",
-      "app.component.html",
+        "app.component.css",
+        "app.component.html",
     ],
     deps = [
+        "@nrwl_nx",
         "@rxjs",
     ],
 )
