@@ -29,31 +29,37 @@ filegroup(
     ]),
 )
 
-# TODO(alexeagle): it's messy for users to need to specify the following
+ANGULAR_TESTING = [
+    "node_modules/@angular/*/bundles/*-testing.umd.js",
+    # We use AOT, so the compiler and the dynamic platform-browser should be
+    # visible only in tests
+    "node_modules/@angular/compiler/bundles/*.umd.js",
+    "node_modules/@angular/platform-browser-dynamic/bundles/*.umd.js",
+]
+
+# TODO: it's messy for users to need to specify the following
 # Angular dependency lists. It should live somewhere else.
 # See https://github.com/angular/angular/issues/21048
 
 filegroup(
     name = "angular_bundles",
-    srcs = [
-        "//:node_modules/@angular/common/bundles/common.umd.js",
-        "//:node_modules/@angular/core/bundles/core.umd.js",
-        "//:node_modules/@angular/platform-browser/bundles/platform-browser.umd.js",
-
-        "//:node_modules/@ngrx/store/bundles/store.umd.js"
-    ],
+    srcs = glob(
+        [
+            "node_modules/@angular/*/bundles/*.umd.js",
+        ],
+        exclude = ANGULAR_TESTING + [
+            "node_modules/@angular/bazel/**/*",
+            "node_modules/@angular/cli/**/*",
+            "node_modules/@angular/compiler-cli/**/*",
+            "node_modules/@angular/language-service/**/*",
+        ],
+    ),
 )
 
 filegroup(
     name = "angular_test_bundles",
     testonly = 1,
-    srcs = glob([
-        "node_modules/@angular/*/bundles/*-testing.umd.js",
-        # Bazel uses AOT compilation, so the compiler and the dynamic platform-browser should be
-        # visible only in tests
-        "node_modules/@angular/compiler/bundles/*.umd.js",
-        "node_modules/@angular/platform-browser-dynamic/bundles/*.umd.js",
-    ]),
+    srcs = glob(ANGULAR_TESTING),
 )
 
 filegroup(

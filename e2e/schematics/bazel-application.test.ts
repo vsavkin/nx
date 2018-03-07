@@ -6,8 +6,7 @@ function itShould(testDescription, test) {
 
 describe('Nrwl Workspace (Bazel)', () => {
   afterEach(() => {
-    runCommand('bazel build //apps/...');
-    runCommand('bazel build //libs/...');
+    runCommand('bazel build ...');
   });
 
   itShould('create a bazel project', () => {
@@ -16,14 +15,13 @@ describe('Nrwl Workspace (Bazel)', () => {
   });
 
   itShould('create an app', () => {
-    newApp(
-        'myApp --directory=myDir',
-        '--collection=@nrwl/bazel',
-    );
+    newApp('myApp --directory=myDir', '--collection=@nrwl/bazel');
   });
 
   itShould('create a lib', () => {
     newLib('myLib --directory=myDir', '@nrwl/bazel');
+
+    runCommand('bazel test //libs/my-dir/my-lib/src:test');
   });
 
   itShould('allow adding a lib to a module', () => {
@@ -42,6 +40,7 @@ bootstrap: [AppComponent]
 })
 export class AppModule {}`);
 
+    // TODO: Replace this with a buildozer command to add the lib as a dep.
     updateFile('apps/my-dir/my-app/src/app/BUILD.bazel', `
 package(default_visibility = ["//visibility:public"])
 
@@ -67,5 +66,5 @@ ng_module(
 
   itShould('add a component', () => {
     newComponent('helloWorld --directory=myDir', '@nrwl/bazel');
-  })
+  });
 });
