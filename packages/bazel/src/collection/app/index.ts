@@ -237,7 +237,7 @@ export default function(schema: Schema): Rule {
       }),
       updateComponentTemplate(options), addBootstrap(options.fullPath),
       // addNxModule(options.fullPath), addAppToAngularCliJson(options),
-      addBazelBuildFile(options.fullPath),
+      addBazelBuildFile(options.fullPath), addAppToAngularCliJson(options),
       options.routing ? addRouterRootConfiguration(options.fullPath) : noop()
     ]);
   });
