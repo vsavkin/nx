@@ -32,7 +32,7 @@ export function newBazelProject(): void {
   if (!directoryExists('./tmp/proj_backup')) {
     // TODO delete the try catch after 0.8.0 is released
     try {
-      runNgNew('--collection=@nrwl/bazel --npmScope=proj', true);
+      runNgNew('--collection=@nrwl/bazel --npmScope=proj --yarn', true);
     } catch (e) {
     }
     copyMissingPackages();
@@ -45,9 +45,8 @@ export function newBazelProject(): void {
 export function createNxWorkspace(command: string): string {
   cleanup();
   return execSync(
-             `node ../node_modules/@nrwl/schematics/bin/create-nx-workspace.js ${
-                                                                                 command
-                                                                               }`,
+             `node ../node_modules/@nrwl/schematics/bin/create-nx-workspace.js --yarn ${
+                 command}`,
              {cwd: `./tmp`})
       .toString();
 }
