@@ -1,7 +1,7 @@
 import {checkFilesExist, newApp, newBazelProject, newLib, runCLI, runCommand, updateFile} from '../utils';
 
 describe('Nrwl Workspace (Bazel)', () => {
-  it('should work', () => {
+  it('should add eagerly loaded bazel application with @ngrx and nx lib', () => {
     newBazelProject();
     newApp(
         'myApp --directory=myDir',
@@ -18,9 +18,10 @@ describe('Nrwl Workspace (Bazel)', () => {
 import { BrowserModule } from '@angular/platform-browser';
 import { MyLibModule } from 'proj/libs/my-dir/my-lib/src/my-lib.module';
 import { AppComponent } from './app.component';
+import { StoreModule } from '@ngrx/store';
 
 @NgModule({
-  imports: [BrowserModule, MyLibModule],
+  imports: [BrowserModule, MyLibModule, StoreModule.forRoot({})],
   declarations: [AppComponent],
   bootstrap: [AppComponent]
 })
@@ -50,8 +51,8 @@ ng_module(
     runCommand('bazel build ...');
 
     // Commands to run web servers for dev and prod
-    // bazel run apps/my-dir/my-app/src:src_devserver;
-    // bazel run apps/my-dir/my-app/src:src_prodserver
+    // bazel run apps/my-dir/my-app/src:devserver
+    // bazel run apps/my-dir/my-app/src:prodserver
     runCommand('bazel test ...');
   }, 1000000);
 });
