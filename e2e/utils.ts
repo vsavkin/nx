@@ -46,7 +46,8 @@ export function createNxWorkspace(command: string): string {
   cleanup();
   return execSync(
              `node ../node_modules/@nrwl/schematics/bin/create-nx-workspace.js ${
-                 command}`,
+                                                                                 command
+                                                                               }`,
              {cwd: `./tmp`})
       .toString();
 }
@@ -92,9 +93,16 @@ export function newABazelpp(name: string): string {
       `generate app ${name} --collection=@nrwl/bazel --npmScope=proj`);
 }
 
-export function newLib(
-    name: string, collection: string = '@angular/schematics'): string {
-  return runCLI(`generate lib ${name} --collection=${collection}`);
+export function newLib(name: string, collection?: string): string {
+  const collectionFlag = collection ? `--collection=${collection}` : ''
+
+  return runCLI(`generate lib ${name} ${collectionFlag}`);
+}
+
+export function newComponent(name: string, collection?: string): string {
+  const collectionFlag = collection ? `--collection=${collection}` : '';
+
+  return runCLI(`generate component ${name} ${collectionFlag}`);
 }
 
 export function runSchematic(command: string): string {

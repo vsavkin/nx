@@ -18,6 +18,9 @@
       "description": "Create a library"
     },
     "component": {
+      "aliases": [
+        "c"
+      ],
       "factory": "./collection/component",
       "schema": "./collection/component/schema.json",
       "description": "Create a Component"

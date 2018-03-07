@@ -56,10 +56,6 @@ export interface Schema {
    */
   flat?: boolean;
   /**
-   * Flag to skip the module import.
-   */
-  skipImport?: boolean;
-  /**
    * The selector to use for the component.
    */
   selector?: string;
