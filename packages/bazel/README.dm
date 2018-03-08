@@ -21,3 +21,7 @@ Example: ibazel run apps/my-dir/my-app/src:devserver
 ## Run prod server
 bazel run apps/my-dir/my-app/src:prodserver
 
+## Run unit tests
+ibazel test //libs/mylib/src:test
+* currently works for libs
+
