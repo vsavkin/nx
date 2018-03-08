@@ -1,8 +1,12 @@
 Bazel Commands
 
-## Run dev server
+## Add new app
+node_modules/.bin/ng generate app [name] --collection=@nrwl/bazel
 
-bazel run apps/my-dir/my-app/src:devserver
+## Run dev server
+ibazel run apps/[app specific path]]/src:devserver (anything between apps/**/src points to a specific app)
+Example: bazel run apps/my-dir/my-app/src:devserver
 
 ## Run prod server
 bazel run apps/my-dir/my-app/src:prodserver
+
