@@ -47,7 +47,8 @@ imports: [BrowserModule, MyLibModule, StoreModule.forRoot({})],
 declarations: [AppComponent],
 bootstrap: [AppComponent]
 })
-export class AppModule {}`
+export class AppModule {}
+`
     );
 
     // TODO: Replace this with a buildozer command to add the lib as a dep.
@@ -73,11 +74,25 @@ ng_module(
    "@rxjs",
  ],
 )
- `
+`
     );
   });
 
   itShould('add a component', () => {
     newComponent('helloWorld --directory=myDir', '@nrwl/bazel');
+  });
+
+  itShould('run protractor', () => {
+    runCommand(
+      [
+        'node',
+        'node_modules/concurrently/src/main.js',
+        '"bazel run //src:prodserver"',
+        '"while ! nc -z 127.0.0.1 8080; do sleep 1; done && ng e2e -s=false --app=my-dir/my-app"',
+        '--kill-others',
+        '--success',
+        'first'
+      ].join(' ')
+    );
   });
 });
