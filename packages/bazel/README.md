@@ -2,6 +2,7 @@ Bazel Commands
 
 ## Add new app
 node_modules/.bin/ng generate app [name] --collection=@nrwl/bazel
+
 Example: node_modules/.bin/ng generate app test --collection=@nrwl/bazel
 
 ## Add new component
