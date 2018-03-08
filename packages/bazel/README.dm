@@ -19,7 +19,8 @@ ibazel run apps/[app specific path]]/src:devserver (anything between apps/**/src
 Example: ibazel run apps/my-dir/my-app/src:devserver
 
 ## Run prod server
-bazel run apps/my-dir/my-app/src:prodserver
+bazel run apps/[app specific path]]/src:prodserver (anything between apps/**/src points to a specific app)
+Example: bazel run apps/my-dir/my-app/src:prodserver
 
 ## Run unit tests
 ibazel test //libs/mylib/src:test
