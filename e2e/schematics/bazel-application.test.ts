@@ -87,7 +87,7 @@ ng_module(
       [
         'node',
         'node_modules/concurrently/src/main.js',
-        '"bazel run //src:prodserver"',
+        '"bazel run //apps/my-dir/my-app/src:prodserver"',
         '"while ! nc -z 127.0.0.1 8080; do sleep 1; done && ng e2e -s=false --app=my-dir/my-app"',
         '--kill-others',
         '--success',
