@@ -1,4 +1,13 @@
-import {checkFilesExist, newApp, newBazelProject, newComponent, newLib, runCLI, runCommand, updateFile} from '../utils';
+import {
+  checkFilesExist,
+  newApp,
+  newBazelProject,
+  newComponent,
+  newLib,
+  runCLI,
+  runCommand,
+  updateFile
+} from '../utils';
 
 function itShould(testDescription, test) {
   return it(`should ${testDescription}`, test, 100000);
@@ -26,8 +35,8 @@ describe('Nrwl Workspace (Bazel)', () => {
 
   itShould('allow adding a lib to a module', () => {
     updateFile(
-        'apps/my-dir/my-app/src/app/app.module.ts',
-        `import { NgModule } from '@angular/core';
+      'apps/my-dir/my-app/src/app/app.module.ts',
+      `import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { MyLibModule } from 'proj/libs/my-dir/my-lib/src/my-lib.module';
 import { AppComponent } from './app.component';
@@ -38,10 +47,13 @@ imports: [BrowserModule, MyLibModule, StoreModule.forRoot({})],
 declarations: [AppComponent],
 bootstrap: [AppComponent]
 })
-export class AppModule {}`);
+export class AppModule {}`
+    );
 
     // TODO: Replace this with a buildozer command to add the lib as a dep.
-    updateFile('apps/my-dir/my-app/src/app/BUILD.bazel', `
+    updateFile(
+      'apps/my-dir/my-app/src/app/BUILD.bazel',
+      `
 package(default_visibility = ["//visibility:public"])
 
 load("@angular//:index.bzl", "ng_module")
@@ -61,7 +73,8 @@ ng_module(
    "@rxjs",
  ],
 )
- `);
+ `
+    );
   });
 
   itShould('add a component', () => {

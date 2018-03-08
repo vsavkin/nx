@@ -1,14 +1,35 @@
-import {apply, branchAndMerge, chain, externalSchematic, filter, MergeStrategy, mergeWith, move, noop, Rule, template, Tree, url, SchematicContext, TemplateOptions} from '@angular-devkit/schematics';
-import {Schema} from './schema';
-import {strings} from '@angular-devkit/core';
-import {addImportToModule, insert, toFileName} from '@nrwl/schematics';
+import {
+  apply,
+  branchAndMerge,
+  chain,
+  externalSchematic,
+  filter,
+  MergeStrategy,
+  mergeWith,
+  move,
+  noop,
+  Rule,
+  template,
+  Tree,
+  url,
+  SchematicContext,
+  TemplateOptions,
+} from '@angular-devkit/schematics';
+import { Schema } from './schema';
+import { strings } from '@angular-devkit/core';
+import { addImportToModule, insert, toFileName } from '@nrwl/schematics';
 import * as ts from 'typescript';
-import {addBootstrapToModule} from '@schematics/angular/utility/ast-utils';
-import {insertImport} from '@schematics/angular/utility/route-utils';
-import {addApp, serializeJson, cliConfig, readCliConfigFile} from '../../../../shared/fileutils';
-import {addImportToTestBed} from '../../../../shared/ast-utils';
-import {offsetFromRoot} from '../../../../shared/common';
-import {FormatFiles, wrapIntoFormat} from '../../../../shared/tasks';
+import { addBootstrapToModule } from '@schematics/angular/utility/ast-utils';
+import { insertImport } from '@schematics/angular/utility/route-utils';
+import {
+  addApp,
+  serializeJson,
+  cliConfig,
+  readCliConfigFile
+} from '../../../../shared/fileutils';
+import { addImportToTestBed } from '../../../../shared/ast-utils';
+import { offsetFromRoot } from '../../../../shared/common';
+import { FormatFiles, wrapIntoFormat } from '../../../../shared/tasks';
 import * as fs from 'fs';
 
 interface NormalizedSchema extends Schema {
@@ -57,37 +78,46 @@ ng_module(
         "@rxjs",
     ],
 )
-${schema.spec ? `ts_library(
+${
+      schema.spec
+        ? `ts_library(
     name = "test_lib",
     testonly = 1,
     srcs = glob(["*.spec.ts"]),
     deps = [
         ":${dasherizedName}",
     ],
-)` : ''}
+)`
+        : ''
+      }
 `;
 
     const sourceFile = host.create(buildFilePath, ngModule);
   };
 }
 
-export default function(schema: Schema): Rule {
+export default function (schema: Schema): Rule {
   return wrapIntoFormat(() => {
-    const componentDirectoryPath = `/${schema.sourceDir}/${schema.path}/` +
-        (schema.flat ? '' : strings.dasherize(schema.name));
+    const componentDirectoryPath =
+      `/${schema.sourceDir}/${schema.path}/` +
+      (schema.flat ? '' : strings.dasherize(schema.name));
 
-    const modulePath =
-        `${componentDirectoryPath}/${strings.dasherize(schema.name)}.module.ts`;
+    const modulePath = `${componentDirectoryPath}/${strings.dasherize(
+      schema.name
+    )}.module.ts`;
     const buildFilePath = `${componentDirectoryPath}/BUILD.bazel`;
 
     return chain([
-      externalSchematic(
-          '@schematics/angular', 'component', {...schema, skipImport: true}),
-      ...(schema.module ? [] :
-                          [
-                            addComponentModule(modulePath, schema),
-                            addBazelBuildFile(buildFilePath, schema),
-                          ]),
+      externalSchematic('@schematics/angular', 'component', {
+        ...schema,
+        skipImport: true
+      }),
+      ...(schema.module
+        ? []
+        : [
+          addComponentModule(modulePath, schema),
+          addBazelBuildFile(buildFilePath, schema)
+        ])
     ]);
   });
 }

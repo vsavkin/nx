@@ -6,7 +6,7 @@ export const routerStoreVersion = '5.0.1';
 export const nxVersion = '*';
 export const schematicsVersion = '*';
 export const angularCliSchema =
-    './node_modules/@nrwl/schematics/src/schema.json';
+  './node_modules/@nrwl/schematics/src/schema.json';
 export const latestMigration = '20180227-cleanup-scripts';
 export const prettierVersion = '1.10.2';
 export const typescriptVersion = '2.6.2';

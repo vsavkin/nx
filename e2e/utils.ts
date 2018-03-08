@@ -1,15 +1,15 @@
-import {execSync} from 'child_process';
-import {readFileSync, statSync, writeFileSync} from 'fs';
+import { execSync } from 'child_process';
+import { readFileSync, statSync, writeFileSync } from 'fs';
 import * as path from 'path';
 
 const projectName: string = 'proj';
 
 export function runNgNew(command?: string, silent?: boolean): string {
   return execSync(`../node_modules/.bin/ng new proj ${command}`, {
-           cwd: `./tmp`,
-           ...(silent ? {stdio: ['ignore', 'ignore', 'ignore']} : {})
-         })
-      .toString();
+    cwd: `./tmp`,
+    ...(silent ? { stdio: ['ignore', 'ignore', 'ignore'] } : {})
+  })
+    .toString();
 }
 
 export function newProject(): void {
@@ -21,7 +21,7 @@ export function newProject(): void {
     } catch (e) {
     }
     copyMissingPackages();
-    execSync('npm run postinstall', {cwd: './tmp/proj'});
+    execSync('npm run postinstall', { cwd: './tmp/proj' });
     execSync('mv ./tmp/proj ./tmp/proj_backup');
   }
   execSync('cp -a ./tmp/proj_backup ./tmp/proj');
@@ -36,7 +36,7 @@ export function newBazelProject(): void {
     } catch (e) {
     }
     copyMissingPackages();
-    execSync('npm run postinstall', {cwd: './tmp/proj'});
+    execSync('npm run postinstall', { cwd: './tmp/proj' });
     execSync('mv ./tmp/proj ./tmp/proj_backup');
   }
   execSync('cp -a ./tmp/proj_backup ./tmp/proj');
@@ -45,15 +45,15 @@ export function newBazelProject(): void {
 export function createNxWorkspace(command: string): string {
   cleanup();
   return execSync(
-             `node ../node_modules/@nrwl/schematics/bin/create-nx-workspace.js --yarn ${
-                 command}`,
-             {cwd: `./tmp`})
-      .toString();
+    `node ../node_modules/@nrwl/schematics/bin/create-nx-workspace.js --yarn ${
+    command}`,
+    { cwd: `./tmp` })
+    .toString();
 }
 
 export function copyMissingPackages(): void {
   const modulesToCopy =
-      ['@ngrx', 'jasmine-marbles', '@nrwl', 'angular', '@angular/upgrade'];
+    ['@ngrx', 'jasmine-marbles', '@nrwl', 'angular', '@angular/upgrade'];
   modulesToCopy.forEach(m => copyNodeModule(projectName, m));
 }
 
@@ -67,12 +67,12 @@ export function runCLI(command?: string, opts = {
 }): string {
   try {
     return execSync(
-               `./node_modules/.bin/ng ${command}`,
-               {cwd: `./tmp/${projectName}`})
-        .toString()
-        .replace(
-            /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
-            '');
+      `./node_modules/.bin/ng ${command}`,
+      { cwd: `./tmp/${projectName}` })
+      .toString()
+      .replace(
+        /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g,
+        '');
   } catch (e) {
     if (opts.silenceError) {
       return e.stdout.toString();
@@ -89,7 +89,7 @@ export function newApp(name: string, schematics?: string): string {
 
 export function newABazelpp(name: string): string {
   return runCLI(
-      `generate app ${name} --collection=@nrwl/bazel --npmScope=proj`);
+    `generate app ${name} --collection=@nrwl/bazel --npmScope=proj`);
 }
 
 export function newLib(name: string, collection?: string): string {
@@ -106,13 +106,13 @@ export function newComponent(name: string, collection?: string): string {
 
 export function runSchematic(command: string): string {
   return execSync(
-             `./node_modules/.bin/schematics ${command}`,
-             {cwd: `./tmp/${projectName}`})
-      .toString();
+    `./node_modules/.bin/schematics ${command}`,
+    { cwd: `./tmp/${projectName}` })
+    .toString();
 }
 
 export function runCommand(command: string): string {
-  return execSync(command, {cwd: `./tmp/${projectName}`}).toString();
+  return execSync(command, { cwd: `./tmp/${projectName}` }).toString();
 }
 
 export function updateFile(f: string, content: string): void {
@@ -122,7 +122,7 @@ export function updateFile(f: string, content: string): void {
 export function checkFilesExist(...expectedFiles: string[]) {
   expectedFiles.forEach(f => {
     const ff =
-        f.startsWith('/') ? f : path.join(getCwd(), 'tmp', projectName, f);
+      f.startsWith('/') ? f : path.join(getCwd(), 'tmp', projectName, f);
     if (!exists(ff)) {
       throw new Error(`File '${ff}' does not exist`);
     }
