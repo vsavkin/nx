@@ -6,7 +6,8 @@ import {
   newLib,
   runCLI,
   runCommand,
-  updateFile
+  updateFile,
+  cleanup
 } from '../utils';
 
 function itShould(testDescription, test) {
@@ -14,6 +15,14 @@ function itShould(testDescription, test) {
 }
 
 describe('Nrwl Workspace (Bazel)', () => {
+  beforeAll(() => {
+    cleanup();
+  });
+
+  afterAll(() => {
+    cleanup();
+  });
+
   afterEach(() => {
     runCommand('bazel build ...');
   });
