@@ -6,7 +6,10 @@
   "es2015": "../esm2015/nrwl-nx-testing.js",
   "ngPackage": {
     "lib": {
-      "entryFile": "index.ts"
+      "entryFile": "index.ts",
+      "umdModuleIds": {
+        "jasmine-marbles" : "jasmine-marbles"
+      }
     }
   }
 }
