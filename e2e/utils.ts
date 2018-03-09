@@ -33,9 +33,6 @@ export function newBazelProject(): void {
   } catch (e) {}
   copyMissingPackages();
   execSync('npm run postinstall', { cwd: './tmp/proj' });
-  execSync('mv ./tmp/proj ./tmp/proj_backup');
-
-  execSync('cp -a ./tmp/proj_backup ./tmp/proj');
 }
 
 export function createNxWorkspace(command: string): string {
