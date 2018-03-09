@@ -14,6 +14,12 @@ sed -i.bak "s/define(\[/define('@nrwl\/nx',\[/" build/packages/nx/bundles/nrwl-n
 rm -rf build/packages/nx/bundles/nrwl-nx.umd.js.bak
 rm -rf build/packages/nx/bundles/nrwl-nx.umd.min.js.bak
 
+sed -i.bak "s/define(\[/define('@nrwl\/nx\/testing',\[/" build/packages/nx/bundles/nrwl-nx-testing.umd.js
+sed -i.bak "s/define(\[/define('@nrwl\/nx\/testing',\[/" build/packages/nx/bundles/nrwl-nx-testing.umd.min.js
+
+rm -rf build/packages/nx/bundles/nrwl-nx-testing.umd.js.bak
+rm -rf build/packages/nx/bundles/nrwl-nx-testing.umd.min.js.bak
+
 rsync -a --exclude=*.ts packages/ build/packages
 
 chmod +x build/packages/schematics/bin/create-nx-workspace.js
