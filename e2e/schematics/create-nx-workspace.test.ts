@@ -1,9 +1,22 @@
-import { checkFilesExist, createNxWorkspace, readFile } from '../utils';
+import {
+  checkFilesExist,
+  createNxWorkspace,
+  readFile,
+  cleanup
+} from '../utils';
 
 /**
  * Too slow to run on CI :(
  */
 xdescribe('CreateNxWorkspace', () => {
+  beforeAll(() => {
+    cleanup();
+  });
+
+  afterAll(() => {
+    cleanup();
+  });
+
   it(
     'should create a new workspace using npm',
     () => {

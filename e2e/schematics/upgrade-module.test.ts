@@ -1,6 +1,14 @@
-import { newApp, newProject, runCLI, updateFile } from '../utils';
+import { newApp, newProject, runCLI, updateFile, cleanup } from '../utils';
 
 describe('Upgrade', () => {
+  beforeAll(() => {
+    cleanup();
+  });
+
+  afterAll(() => {
+    cleanup();
+  });
+
   it(
     'should generate an UpgradeModule setup',
     () => {
@@ -26,7 +34,10 @@ describe('Upgrade', () => {
 
       updateFile('apps/myapp/src/app/app.component.spec.ts', ``);
 
-      runCLI('generate upgrade-module legacy --angularJsImport=./legacy ' + '--angularJsCmpSelector=rootLegacyCmp');
+      runCLI(
+        'generate upgrade-module legacy --angularJsImport=./legacy ' +
+          '--angularJsCmpSelector=rootLegacyCmp'
+      );
 
       runCLI('build');
       runCLI('test --single-run');

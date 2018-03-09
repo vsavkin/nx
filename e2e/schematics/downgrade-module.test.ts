@@ -1,13 +1,24 @@
-import { newApp, newProject, runCLI, updateFile } from '../utils';
+import { newApp, newProject, runCLI, updateFile, cleanup } from '../utils';
 
 describe('DowngradeModule', () => {
+  beforeAll(() => {
+    cleanup();
+  });
+
+  afterAll(() => {
+    cleanup();
+  });
+
   it(
     'should generate a downgradeModule setup',
     () => {
       newProject();
       newApp('myapp');
 
-      updateFile('apps/myapp/src/legacy.js', `window.angular.module('legacy', []);`);
+      updateFile(
+        'apps/myapp/src/legacy.js',
+        `window.angular.module('legacy', []);`
+      );
 
       runCLI('generate downgrade-module legacy --angularJsImport=./legacy');
 

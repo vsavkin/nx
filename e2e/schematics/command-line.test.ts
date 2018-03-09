@@ -1,6 +1,23 @@
-import { newApp, newLib, newProject, readFile, runCLI, runCommand, updateFile } from '../utils';
+import {
+  newApp,
+  newLib,
+  newProject,
+  readFile,
+  runCLI,
+  runCommand,
+  updateFile,
+  cleanup
+} from '../utils';
 
 describe('Command line', () => {
+  beforeAll(() => {
+    cleanup();
+  });
+
+  afterAll(() => {
+    cleanup();
+  });
+
   it(
     'lint should ensure module boundaries',
     () => {
@@ -49,7 +66,9 @@ describe('Command line', () => {
       `
       );
       const checkOut = runCommand('npm run update:check');
-      expect(checkOut).toContain('Run "npm run update" to run the following migrations');
+      expect(checkOut).toContain(
+        'Run "npm run update" to run the following migrations'
+      );
       expect(checkOut).toContain('20200101-test-migration');
 
       const migrateOut = runCommand('npm run update');
@@ -72,7 +91,9 @@ describe('Command line', () => {
       );
 
       const checkOut2 = runCommand('npm run update:check');
-      expect(checkOut2).toContain('Run "npm run update" to run the following migrations');
+      expect(checkOut2).toContain(
+        'Run "npm run update" to run the following migrations'
+      );
       expect(checkOut2).toContain('20200102-test-migration');
 
       const skipOut = runCommand('npm run update:skip');
@@ -94,16 +115,25 @@ describe('Command line', () => {
       newApp('myapp2');
       newLib('mylib');
 
-      updateFile('apps/myapp/src/app/app.component.spec.ts', `import '@proj/mylib';`);
+      updateFile(
+        'apps/myapp/src/app/app.component.spec.ts',
+        `import '@proj/mylib';`
+      );
 
-      const affectedApps = runCommand('npm run affected:apps -- --files="libs/mylib/index.ts"');
+      const affectedApps = runCommand(
+        'npm run affected:apps -- --files="libs/mylib/index.ts"'
+      );
       expect(affectedApps).toContain('myapp');
       expect(affectedApps).not.toContain('myapp2');
 
-      const build = runCommand('npm run affected:build -- --files="libs/mylib/index.ts"');
+      const build = runCommand(
+        'npm run affected:build -- --files="libs/mylib/index.ts"'
+      );
       expect(build).toContain('Building myapp');
 
-      const e2e = runCommand('npm run affected:e2e -- --files="libs/mylib/index.ts"');
+      const e2e = runCommand(
+        'npm run affected:e2e -- --files="libs/mylib/index.ts"'
+      );
       expect(e2e).toContain('should display welcome message');
     },
     1000000
@@ -151,7 +181,9 @@ describe('Command line', () => {
 
       try {
         // this will group it by lib, so all three files will be "marked"
-        runCommand('npm run -s format:check -- --files="libs/mylib/index.ts" --libs-and-apps');
+        runCommand(
+          'npm run -s format:check -- --files="libs/mylib/index.ts" --libs-and-apps'
+        );
         fail('boom');
       } catch (e) {
         expect(e.stdout.toString()).toContain('libs/mylib/index.ts');
@@ -164,8 +196,12 @@ describe('Command line', () => {
         fail('boom');
       } catch (e) {
         expect(e.stdout.toString()).toContain('apps/myapp/src/main.ts');
-        expect(e.stdout.toString()).toContain('apps/myapp/src/app/app.module.ts');
-        expect(e.stdout.toString()).toContain('apps/myapp/src/app/app.component.ts');
+        expect(e.stdout.toString()).toContain(
+          'apps/myapp/src/app/app.module.ts'
+        );
+        expect(e.stdout.toString()).toContain(
+          'apps/myapp/src/app/app.component.ts'
+        );
       }
       runCommand(
         'npm run format:write -- --files="apps/myapp/src/app/app.module.ts,apps/myapp/src/app/app.component.ts"'
@@ -176,8 +212,12 @@ describe('Command line', () => {
         fail('boom');
       } catch (e) {
         expect(e.stdout.toString()).toContain('apps/myapp/src/main.ts');
-        expect(e.stdout.toString()).not.toContain('apps/myapp/src/app/app.module.ts');
-        expect(e.stdout.toString()).not.toContain('apps/myapp/src/app/app.component.ts');
+        expect(e.stdout.toString()).not.toContain(
+          'apps/myapp/src/app/app.module.ts'
+        );
+        expect(e.stdout.toString()).not.toContain(
+          'apps/myapp/src/app/app.component.ts'
+        );
       }
 
       runCommand('npm run format:write');

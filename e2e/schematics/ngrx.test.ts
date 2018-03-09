@@ -1,12 +1,22 @@
-import { newApp, newProject, runCLI, updateFile } from '../utils';
+import { newApp, newProject, runCLI, updateFile, cleanup } from '../utils';
 
 describe('ngrx', () => {
+  beforeAll(() => {
+    cleanup();
+  });
+
+  afterAll(() => {
+    cleanup();
+  });
+
   it(
     'should work',
     () => {
       newProject();
       newApp('myapp');
-      runCLI('generate ngrx app --module=apps/myapp/src/app/app.module.ts --root --collection=@nrwl/schematics');
+      runCLI(
+        'generate ngrx app --module=apps/myapp/src/app/app.module.ts --root --collection=@nrwl/schematics'
+      );
       updateFile(
         'apps/myapp/src/app/+state/app.interfaces.ts',
         `
