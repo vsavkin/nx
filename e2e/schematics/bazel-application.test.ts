@@ -15,13 +15,13 @@ function itShould(testDescription, test) {
 }
 
 describe('Nrwl Workspace (Bazel)', () => {
-  beforeAll(() => {
-    cleanup();
-  });
+  // beforeAll(() => {
+  //   cleanup();
+  // });
 
-  afterAll(() => {
-    cleanup();
-  });
+  // afterAll(() => {
+  //   cleanup();
+  // });
 
   afterEach(() => {
     runCommand('bazel build ...');
@@ -93,12 +93,28 @@ ng_module(
   });
 
   itShould('run protractor', () => {
+    const prodServerPort = 8080;
+    headlessProtractorConfig(prodServerPort);
     runCommand(
       [
         'node',
         'node_modules/concurrently/src/main.js',
         '"bazel run //apps/my-dir/my-app/src:prodserver"',
-        '"while ! nc -z 127.0.0.1 8080; do sleep 1; done && ng e2e -s=false --app=my-dir/my-app"',
+        `"while ! nc -z 127.0.0.1 ${prodServerPort}; do sleep 1; done && ng e2e -s=false --app=my-dir/my-app"`,
+        '--kill-others',
+        '--success',
+        'first'
+      ].join(' ')
+    );
+
+    const devServerPort = 5432;
+    headlessProtractorConfig(devServerPort);
+    runCommand(
+      [
+        'node',
+        'node_modules/concurrently/src/main.js',
+        '"bazel run //apps/my-dir/my-app/src:devserver"',
+        `"while ! nc -z 127.0.0.1 ${devServerPort}; do sleep 1; done && ng e2e -s=false --app=my-dir/my-app"`,
         '--kill-others',
         '--success',
         'first'
@@ -106,3 +122,44 @@ ng_module(
     );
   });
 });
+
+function headlessProtractorConfig(port: number): void {
+  return updateFile(
+    'protractor.conf.js',
+    `const { SpecReporter } = require('jasmine-spec-reporter');
+  const { getAppDirectoryUsingCliConfig } = require('@nrwl/schematics/src/utils/cli-config-utils');
+  const appDir = getAppDirectoryUsingCliConfig();
+  
+  exports.config = {
+    allScriptsTimeout: 11000,
+    specs: [
+      appDir + '/e2e/**/*.e2e-spec.ts'
+    ],
+    multiCapabilities: {
+      'browserName': 'chrome',
+    
+      chromeOptions: {
+        args: [
+          '--headless',
+          '--disable-gpu',
+          '--window-size=1280x720',
+        ],
+      },
+    },
+    directConnect: true,
+    baseUrl: 'http://localhost:${port}/',
+    framework: 'jasmine',
+    jasmineNodeOpts: {
+      showColors: true,
+      defaultTimeoutInterval: 30000,
+      print: function() {}
+    },
+    onPrepare() {
+      require('ts-node').register({
+        project: appDir + '/e2e/tsconfig.e2e.json'
+      });
+      jasmine.getEnv().addReporter(new SpecReporter({ spec: { displayStacktrace: true } }));
+    }
+  };`
+  );
+}
