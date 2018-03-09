@@ -41,9 +41,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { MyLibModule } from 'proj/libs/my-dir/my-lib/src/my-lib.module';
 import { AppComponent } from './app.component';
 import { StoreModule } from '@ngrx/store';
+import { NxModule } from '@nrwl/nx';
 
 @NgModule({
-imports: [BrowserModule, MyLibModule, StoreModule.forRoot({})],
+imports: [BrowserModule, MyLibModule, StoreModule.forRoot({}), NxModule.forRoot()],
 declarations: [AppComponent],
 bootstrap: [AppComponent]
 })

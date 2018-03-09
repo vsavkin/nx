@@ -40,25 +40,24 @@ function addBootstrap(path: string): Rule {
   return (host: Tree) => {
     const modulePath = `${path}/app/app.module.ts`;
     const moduleSource = host.read(modulePath)!.toString('utf-8');
-    const sourceFile = ts.createSourceFile(modulePath, moduleSource, ts.ScriptTarget.Latest, true);
+    const sourceFile = ts.createSourceFile(
+      modulePath,
+      moduleSource,
+      ts.ScriptTarget.Latest,
+      true
+    );
     insert(host, modulePath, [
       insertImport(
         sourceFile,
         modulePath,
         'BrowserModule',
-
         '@angular/platform-browser'
-
       ),
-      ...addImportToModule(sourceFile,
-        modulePath,
-        'BrowserModule'),
+      ...addImportToModule(sourceFile, modulePath, 'BrowserModule'),
       ...addBootstrapToModule(
         sourceFile,
-
         modulePath,
-        'AppComponent'
-        ,
+        'AppComponent',
         './app.component'
       )
     ]);
@@ -70,7 +69,12 @@ function addNxModule(path: string): Rule {
   return (host: Tree) => {
     const modulePath = `${path}/app/app.module.ts`;
     const moduleSource = host.read(modulePath)!.toString('utf-8');
-    const sourceFile = ts.createSourceFile(modulePath, moduleSource, ts.ScriptTarget.Latest, true);
+    const sourceFile = ts.createSourceFile(
+      modulePath,
+      moduleSource,
+      ts.ScriptTarget.Latest,
+      true
+    );
     insert(host, modulePath, [
       insertImport(sourceFile, modulePath, 'NxModule', '@nrwl/nx'),
       ...addImportToModule(sourceFile, modulePath, 'NxModule.forRoot()')
@@ -107,7 +111,17 @@ function addAppToAngularCliJson(options: NormalizedSchema): Rule {
       }
     });
 
-    json.lint = [...(json.lint || []), { project: `${options.fullPath}/tsconfig.app.json`, exclude: '**/node_modules/**' }, { project: `apps/${options.fullName}/e2e/tsconfig.e2e.json`, exclude: '**/node_modules/**' }];
+    json.lint = [
+      ...(json.lint || []),
+      {
+        project: `${options.fullPath}/tsconfig.app.json`,
+        exclude: '**/node_modules/**'
+      },
+      {
+        project: `apps/${options.fullName}/e2e/tsconfig.e2e.json`,
+        exclude: '**/node_modules/**'
+      }
+    ];
 
     host.overwrite('.angular-cli.json', serializeJson(json));
     return host;
@@ -119,14 +133,14 @@ function addRouterRootConfiguration(path: string): Rule {
     const modulePath = `${path}/app/app.module.ts`;
     console.log(modulePath);
     const moduleSource = host.read(modulePath)!.toString('utf-8');
-    const sourceFile = ts.createSourceFile(modulePath, moduleSource, ts.ScriptTarget.Latest, true);
+    const sourceFile = ts.createSourceFile(
+      modulePath,
+      moduleSource,
+      ts.ScriptTarget.Latest,
+      true
+    );
     insert(host, modulePath, [
-      insertImport(
-        sourceFile,
-        modulePath,
-        'RouterModule',
-        '@angular/router'
-      ),
+      insertImport(sourceFile, modulePath, 'RouterModule', '@angular/router'),
       ...addImportToModule(
         sourceFile,
         modulePath,
@@ -136,7 +150,12 @@ function addRouterRootConfiguration(path: string): Rule {
 
     const componentSpecPath = `${path}/app/app.component.spec.ts`;
     const componentSpecSource = host.read(componentSpecPath)!.toString('utf-8');
-    const componentSpecSourceFile = ts.createSourceFile(componentSpecPath, componentSpecSource, ts.ScriptTarget.Latest, true);
+    const componentSpecSourceFile = ts.createSourceFile(
+      componentSpecPath,
+      componentSpecSource,
+      ts.ScriptTarget.Latest,
+      true
+    );
     insert(host, componentSpecPath, [
       insertImport(
         componentSpecSourceFile,
@@ -174,7 +193,9 @@ Nx is designed to help you create and build enterprise grade Angular application
 
 function updateComponentTemplate(options: NormalizedSchema): Rule {
   return (host: Tree) => {
-    const content = options.routing ? `${staticComponentContent}\n<router-outlet></router-outlet>` : staticComponentContent;
+    const content = options.routing
+      ? `${staticComponentContent}\n<router-outlet></router-outlet>`
+      : staticComponentContent;
     host.overwrite(`${options.fullPath}/app/app.component.html`, content);
   };
 }
@@ -225,7 +246,7 @@ ts_web_test(
   };
 }
 
-export default function (schema: Schema): Rule {
+export default function(schema: Schema): Rule {
   return wrapIntoFormat(() => {
     let npmScope = schema.npmScope;
     if (!npmScope) {
@@ -270,19 +291,20 @@ export default function (schema: Schema): Rule {
       }),
       updateComponentTemplate(options),
       addBootstrap(options.fullPath),
-      // addNxModule(options.fullPath),
+      addNxModule(options.fullPath),
       addAppToAngularCliJson(options),
-      addBazelBuildFile(options.fullPath), addAppToAngularCliJson(options),
-      options.routing
-        ? addRouterRootConfiguration(options.fullPath)
-        : noop()
+      addBazelBuildFile(options.fullPath),
+      addAppToAngularCliJson(options),
+      options.routing ? addRouterRootConfiguration(options.fullPath) : noop()
     ]);
   });
 }
 
 function normalizeOptions(options: Schema): NormalizedSchema {
   const name = toFileName(options.name);
-  const fullName = options.directory ? `${toFileName(options.directory)}/${name}` : name;
+  const fullName = options.directory
+    ? `${toFileName(options.directory)}/${name}`
+    : name;
   const fullPath = `apps/${fullName}/src`;
   return { ...options, sourceDir: 'src', name, fullName, fullPath };
 }
