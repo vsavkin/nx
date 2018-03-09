@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "build": "ng-packagr -p packages/nx/ng-package.json && ./scripts/build.sh",
-    "e2e": "./scripts/e2e.sh bazel-application",
+    "e2e": "./scripts/e2e.sh",
     "format": "precise-commits --whitelist=\"{packages,e2e}/**/*.ts\"",
     "linknpm": "./scripts/link.sh",
     "package": "./scripts/package.sh",
