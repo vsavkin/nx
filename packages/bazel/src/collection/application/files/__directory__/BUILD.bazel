@@ -51,7 +51,7 @@ filegroup(
             "node_modules/@ngrx/router-store/bundles/router-store.umd.js",
             "node_modules/@ngrx/effects/bundles/effects.umd.js",
 
-            "node_modules/@nrwl/nx/bundles/nx.umd.js",
+            "node_modules/@nrwl/nx/bundles/nrwl-nx.umd.js",
         ],
         exclude = ANGULAR_TESTING + [
             "node_modules/@angular/bazel/**/*",
