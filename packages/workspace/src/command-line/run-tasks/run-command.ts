@@ -17,7 +17,7 @@ import {
 } from './utils';
 import * as yargs from 'yargs';
 
-interface TasksMap {
+export interface TasksMap {
   [projectName: string]: { [targetName: string]: Task };
 }
 
@@ -66,6 +66,7 @@ export function runCommand<T extends RunArgs>(
     targetArgs
   );
   tasksRunner(tasks, tasksOptions, {
+    target: nxArgs.target,
     dependencyGraph: dependencyGraph,
     tasksMap
   }).subscribe({
@@ -169,7 +170,7 @@ export function getRunner(
       modulePath = join(appRootPath, modulePath);
     }
     return {
-      tasksRunner: require(modulePath),
+      tasksRunner: require(modulePath).default,
       tasksOptions: {
         ...nxJson.tasksRunnerOptions[runner].options,
         ...targetArgs
