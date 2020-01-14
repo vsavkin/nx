@@ -30,33 +30,21 @@ type Context = {
 };
 
 class InsightsRemoteCache implements RemoteCache {
-  constructor(private readonly axiosInstance: any) {
+  constructor(private readonly nrwlApiAxiosInstance: any) {
   }
 
   async retrieve(hash: string, cacheDirectory: string): Promise<boolean> {
     try {
       const url = await this.getDownloadUrl(hash);
-      const file = this.createFileName(hash, cacheDirectory);
-      const resp = await this.axiosInstance({
-        method: 'get',
-        url: `/nx-cache/${hash}`,
-        maxContentLength: 1000 * 1000 * 200
-      });
-      const tg = path.join(cacheDirectory, `${hash}.tg`);
-      writeFileSync(tg, resp.data, {encoding: 'base64'});
-      await tar.x({
-        file: tg,
-        cwd: cacheDirectory
-      });
-      writeFileSync(path.join(cacheDirectory, `${hash}.commit`), 'true');
+      const tgz = this.createFileName(hash, cacheDirectory);
+      await this.downloadFile(url, tgz);
+      this.createCommitFile(hash, cacheDirectory);
       return true;
     } catch (e) {
       if (e.response && e.response.status === 404) {
         // cache miss. print nothing
-      } else if (e.code === 'ECONNREFUSED' || e.code === 'EAI_AGAIN') {
-        console.error(`Error: Cannot connect to remote cache.`);
       } else {
-        console.error(e.message);
+        this.printErrorMessage(e);
       }
       return false;
     }
@@ -64,26 +52,59 @@ class InsightsRemoteCache implements RemoteCache {
 
   async store(hash: string, cacheDirectory: string): Promise<boolean> {
     try {
-      const tgz = await this.createFile(hash, cacheDirectory);
       const url = await this.getUploadUrl(hash);
+      const tgz = await this.createFile(hash, cacheDirectory);
       await this.uploadFile(url, tgz);
       return true;
     } catch (e) {
-      if (e.code === 'ECONNREFUSED' || e.code === 'EAI_AGAIN') {
-        console.error(`Error: Cannot connect to remote cache.`);
-      } else {
-        console.error(e.message);
-      }
+      this.printErrorMessage(e);
       return false;
     }
   }
 
+  private printErrorMessage(e) {
+    if (e.code === 'ECONNREFUSED' || e.code === 'EAI_AGAIN') {
+      console.error(`Error: Cannot connect to remote cache.`);
+    } else {
+      console.error(e.message);
+    }
+  }
+
   private async getDownloadUrl(hash: string) {
-    const resp = await this.axiosInstance({
+    const resp = await this.nrwlApiAxiosInstance({
       method: 'get',
       url: `/nx-cache/${hash}`
     });
+    if (!resp.data || !resp.data.url || !(typeof resp.data.url === 'string')) {
+      throw new Error(`Invalid remote cache response: ${JSON.stringify(resp.data)}`)
+    }
     return resp.data.url;
+  }
+
+  private createFileName(hash: string, cacheDirectory: string) {
+    return path.join(cacheDirectory, `${hash}.tar.gz`);
+  }
+
+  private async downloadFile(url: string, tgz: string) {
+    const resp = await axios(url, {
+      method: 'GET',
+      responseType: 'stream',
+      maxContentLength: 1000 * 1000 * 200
+    });
+    resp.data.pipe(
+      tar.x({
+        cwd: path.dirname(tgz)
+      })
+    );
+    return new Promise(res => {
+      resp.data.on('end', () => {
+        res();
+      })
+    })
+  }
+
+  private createCommitFile(hash: string, cacheDirectory: string) {
+    writeFileSync(path.join(cacheDirectory, `${hash}.commit`), 'true');
   }
 
   private async createFile(hash: string, cacheDirectory: string) {
@@ -99,20 +120,19 @@ class InsightsRemoteCache implements RemoteCache {
     return tgz;
   }
 
-  private createFileName(hash: string, cacheDirectory: string) {
-    return path.join(cacheDirectory, `${hash}.tar.gz`);
-  }
-
   private async getUploadUrl(hash: string) {
-    const resp = await this.axiosInstance({
+    const resp = await this.nrwlApiAxiosInstance({
       method: 'get',
       url: `/nx-cache/store/${hash}`
     });
+    if (!resp.data || !resp.data.url || !(typeof resp.data.url === 'string')) {
+      throw new Error(`Invalid remote cache response: ${JSON.stringify(resp.data)}`)
+    }
     return resp.data.url;
   }
 
   private async uploadFile(url: string, tgz: string) {
-    await this.axiosInstance(url, {
+    await axios(url, {
       method: 'PUT',
       data: fs.readFileSync(tgz),
       headers: {'Content-Type': 'application/octet-stream'},
