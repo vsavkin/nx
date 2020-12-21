@@ -55,7 +55,6 @@ export async function run(root: string, opts: RunOptions, verbose: boolean) {
   );
 
   const registry = new json.schema.CoreSchemaRegistry();
-  registry.addPostTransform(schema.transforms.addUndefinedDefaults);
   const architectHost = new WorkspaceNodeModulesArchitectHost(workspace, root);
   const architect = new Architect(architectHost, registry);
   const run = await architect.scheduleTarget(
@@ -77,7 +76,7 @@ function createWorkflow(
   root: string,
   opts: any
 ) {
-  const workflow = new NodeWorkflow(fsHost, {
+  return new NodeWorkflow(fsHost, {
     force: opts.force,
     dryRun: opts.dryRun,
     packageManager: detectPackageManager(),
@@ -85,11 +84,6 @@ function createWorkflow(
     registry: new schema.CoreSchemaRegistry(formats.standardFormats),
     resolvePaths: [process.cwd(), root],
   });
-  workflow.registry.addPostTransform(schema.transforms.addUndefinedDefaults);
-  workflow.engineHost.registerOptionsTransform(
-    validateOptionsWithSchema(workflow.registry)
-  );
-  return workflow;
 }
 
 function getCollection(workflow: any, name: string) {
