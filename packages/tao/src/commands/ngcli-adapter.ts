@@ -5,7 +5,6 @@ import {
   logging,
   normalize,
   Path,
-  schema,
   tags,
   virtualFs,
   workspaces,
@@ -18,11 +17,9 @@ import {
   FileSystemSchematicDescription,
   NodeModulesEngineHost,
   NodeWorkflow,
-  validateOptionsWithSchema,
 } from '@angular-devkit/schematics/tools';
 import {
   DryRunEvent,
-  formats,
   Schematic,
   TaskExecutor,
 } from '@angular-devkit/schematics';
@@ -42,7 +39,7 @@ import { BuiltinTaskExecutor } from '@angular-devkit/schematics/tasks/node';
 import { dirname, extname, join, resolve } from 'path';
 import * as stripJsonComments from 'strip-json-comments';
 import { FileBuffer } from '@angular-devkit/core/src/virtual-fs/host/interface';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { concatMap, map, switchMap } from 'rxjs/operators';
 import { NX_ERROR, NX_PREFIX } from '../shared/logger';
 
@@ -54,9 +51,8 @@ export async function run(root: string, opts: RunOptions, verbose: boolean) {
     workspaces.createWorkspaceHost(fsHost)
   );
 
-  const registry = new json.schema.CoreSchemaRegistry();
   const architectHost = new WorkspaceNodeModulesArchitectHost(workspace, root);
-  const architect = new Architect(architectHost, registry);
+  const architect = new Architect(architectHost, createRegistry());
   const run = await architect.scheduleTarget(
     {
       project: opts.project,
@@ -81,9 +77,17 @@ function createWorkflow(
     dryRun: opts.dryRun,
     packageManager: detectPackageManager(),
     root: normalize(root),
-    registry: new schema.CoreSchemaRegistry(formats.standardFormats),
+    registry: createRegistry(),
     resolvePaths: [process.cwd(), root],
   });
+}
+
+function createRegistry() {
+  const registry = new json.schema.CoreSchemaRegistry();
+  const schemaValidator = (data) =>
+    of({ success: true, data: data, errors: undefined });
+  registry.compile = () => of(schemaValidator);
+  return registry;
 }
 
 function getCollection(workflow: any, name: string) {
