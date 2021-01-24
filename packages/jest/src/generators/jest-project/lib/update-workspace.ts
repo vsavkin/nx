@@ -1,10 +1,10 @@
-import { join, normalize } from '@angular-devkit/core';
 import { JestProjectSchema } from '../schema';
 import {
   readProjectConfiguration,
   Tree,
   updateProjectConfiguration,
 } from '@nrwl/devkit';
+import { join, normalize } from 'path';
 
 export function updateWorkspace(tree: Tree, options: JestProjectSchema) {
   const projectConfig = readProjectConfiguration(tree, options.project);

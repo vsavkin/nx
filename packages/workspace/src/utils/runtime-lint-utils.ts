@@ -1,4 +1,3 @@
-import { normalize } from '@angular-devkit/core';
 import * as path from 'path';
 import { FileData } from '../core/file-utils';
 import {
@@ -285,7 +284,7 @@ export function onlyLoadChildren(
 }
 
 export function getSourceFilePath(sourceFileName: string, projectPath: string) {
-  return normalize(sourceFileName).substring(projectPath.length + 1);
+  return path.normalize(sourceFileName).substring(projectPath.length + 1);
 }
 
 /**

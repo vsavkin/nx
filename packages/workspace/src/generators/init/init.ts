@@ -18,8 +18,7 @@ import {
   visitNotIgnoredFiles,
   writeJson,
 } from '@nrwl/devkit';
-import { basename, join } from 'path';
-import { JsonArray, normalize } from '@angular-devkit/core';
+import { basename, join, normalize } from 'path';
 import { Schema } from './schema';
 import {
   angularCliVersion,
@@ -28,8 +27,8 @@ import {
 } from '../../utils/versions';
 import { DEFAULT_NRWL_PRETTIER_CONFIG } from '../workspace/workspace';
 import { readFileSync } from 'fs';
-import { serializeJson } from '../../utils/fileutils';
-import { resolveUserExistingPrettierConfig } from '../../utils/common';
+import { serializeJson } from '../../utilities/fileutils';
+import { resolveUserExistingPrettierConfig } from '../../utilities/prettier';
 
 function updatePackageJson(tree) {
   updateJson(tree, 'package.json', (packageJson) => {
@@ -112,14 +111,11 @@ function updateAngularCLIJson(host: Tree, options: Schema) {
     buildOptions.tsConfig =
       buildOptions.tsConfig && join(newRoot, 'tsconfig.app.json');
     buildOptions.assets =
-      buildOptions.assets &&
-      (buildOptions.assets as JsonArray).map(convertAsset);
+      buildOptions.assets && (buildOptions.assets as any).map(convertAsset);
     buildOptions.styles =
-      buildOptions.styles &&
-      (buildOptions.styles as JsonArray).map(convertAsset);
+      buildOptions.styles && (buildOptions.styles as any).map(convertAsset);
     buildOptions.scripts =
-      buildOptions.scripts &&
-      (buildOptions.scripts as JsonArray).map(convertAsset);
+      buildOptions.scripts && (buildOptions.scripts as any).map(convertAsset);
     buildOptions.fileReplacements =
       buildOptions.fileReplacements &&
       buildOptions.fileReplacements.map((replacement) => ({
@@ -140,12 +136,11 @@ function updateAngularCLIJson(host: Tree, options: Schema) {
     testOptions.tsConfig = join(newRoot, 'tsconfig.spec.json');
     testOptions.karmaConfig = join(newRoot, 'karma.conf.js');
     testOptions.assets =
-      testOptions.assets && (testOptions.assets as JsonArray).map(convertAsset);
+      testOptions.assets && (testOptions.assets as any).map(convertAsset);
     testOptions.styles =
-      testOptions.styles && (testOptions.styles as JsonArray).map(convertAsset);
+      testOptions.styles && (testOptions.styles as any).map(convertAsset);
     testOptions.scripts =
-      testOptions.scripts &&
-      (testOptions.scripts as JsonArray).map(convertAsset);
+      testOptions.scripts && (testOptions.scripts as any).map(convertAsset);
   }
 
   const lintTarget = defaultProject.targets.lint;
